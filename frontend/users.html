@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="vi" class="auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tài khoản — Smart Parking</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Tài khoản nhân viên</h1>
+          <p>Tạo tài khoản, phân quyền, khóa/mở khóa và đặt lại mật khẩu</p>
+        </div>
+      </header>
+      <section class="card">
+        <div class="card__header">
+          <h2>Danh sách tài khoản</h2>
+          <button class="btn btn--primary btn--small" type="button" id="btn-create">+ Thêm tài khoản</button>
+        </div>
+        <div id="table-wrap" class="table-wrap"><p class="muted">Đang tải...</p></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/format.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/pages/users.js"></script>
+</body>
+</html>

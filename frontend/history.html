@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="vi" class="auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lịch sử gửi xe — Smart Parking</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Lịch sử gửi xe</h1>
+          <p>Tra cứu các lượt gửi theo ngày, biển số và trạng thái <span class="badge badge--extra">Chức năng mở rộng</span></p>
+        </div>
+      </header>
+      <section class="card">
+        <form id="filter-form" class="toolbar" role="search">
+          <div class="field"><label for="f-from">Từ ngày</label><input id="f-from" type="date"></div>
+          <div class="field"><label for="f-to">Đến ngày</label><input id="f-to" type="date"></div>
+          <div class="field"><label for="f-status">Trạng thái</label>
+            <select id="f-status"><option value="">Tất cả</option><option value="OPEN">Đang gửi</option>
+              <option value="CLOSED">Đã ra</option><option value="CANCELLED">Đã hủy</option></select></div>
+          <div class="field"><label for="f-plate">Biển số</label>
+            <input id="f-plate" type="search" placeholder="VD: 51F" maxlength="12" autocomplete="off"></div>
+          <button class="btn btn--primary" type="submit">Lọc</button>
+          <span class="toolbar__spacer"></span>
+          <span class="muted" id="result-count"></span>
+        </form>
+        <div id="table-wrap" class="table-wrap"><p class="muted">Đang tải...</p></div>
+        <div class="pager" id="pager"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/format.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/pages/history.js"></script>
+</body>
+</html>
