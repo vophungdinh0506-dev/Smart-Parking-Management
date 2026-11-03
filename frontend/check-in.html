@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi" class="auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xe vào bãi — Smart Parking</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Xe vào bãi</h1>
+          <p>Tải ảnh xe → kiểm tra biển số → xác nhận tạo lượt gửi</p>
+        </div>
+      </header>
+
+      <div class="grid-2">
+        <!-- CỘT TRÁI: tiếp nhận xe -->
+        <section class="card" aria-labelledby="intake-title">
+          <h2 id="intake-title">Tiếp nhận xe vào</h2>
+
+          <!-- Bước 1: chọn ảnh -->
+          <form id="upload-form" novalidate>
+            <div class="step-label"><span class="step-num">1</span> Ảnh xe tại cổng vào</div>
+            <label class="dropzone" id="dropzone" for="image-input">
+              <input id="image-input" name="image" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+              <img id="image-preview" alt="Ảnh xe đã chọn" hidden>
+              <span class="dropzone__hint" id="dropzone-hint">
+                <strong>Bấm để chọn ảnh</strong> hoặc kéo thả ảnh vào đây<br>
+                <span class="muted">JPEG, PNG, WebP · tối đa 5 MB</span>
+              </span>
+            </label>
+            <p class="muted small">Chưa có camera: nhân viên tải ảnh chụp xe lên. Camera thật sẽ được tích hợp sau.</p>
+            <button class="btn btn--primary" type="submit" id="btn-recognize" disabled>Nhận diện biển số</button>
+          </form>
+
+          <!-- Bước 2: kết quả + xác nhận -->
+          <form id="confirm-form" novalidate hidden>
+            <hr class="divider">
+            <div class="step-label"><span class="step-num">2</span> Kiểm tra và xác nhận</div>
+
+            <div id="recognition-status" class="alert" role="status"></div>
+
+            <div id="crop-wrap" class="crop" hidden>
+              <span class="muted small">Vùng biển số AI phát hiện:</span>
+              <img id="crop-image" alt="Ảnh biển số đã cắt">
+            </div>
+
+            <div id="candidates" class="candidates" hidden></div>
+
+            <div class="field">
+              <label for="plate-input">Biển số xe <span class="required">*</span></label>
+              <input id="plate-input" name="plateNumber" type="text" class="plate-input" maxlength="20"
+                     autocomplete="off" spellcheck="false" placeholder="VD: 51F-123.45 hoặc 59-X1 123.45" required>
+              <span class="field__hint" id="plate-hint">Đối chiếu với ảnh. Sửa lại nếu AI đọc sai.</span>
+            </div>
+
+            <fieldset class="field">
+              <legend>Loại xe <span class="required">*</span></legend>
+              <div class="segmented" id="vehicle-types"></div>
+            </fieldset>
+
+            <div id="confirm-error" class="alert alert--error" role="alert" hidden></div>
+
+            <div class="actions">
+              <button class="btn btn--primary" type="submit" id="btn-confirm">Xác nhận xe vào</button>
+              <button class="btn btn--secondary" type="button" id="btn-reset">Hủy, chọn ảnh khác</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- CỘT PHẢI: xe đang trong bãi -->
+        <section class="card" aria-labelledby="inside-title">
+          <div class="card__header">
+            <h2 id="inside-title">Xe đang trong bãi <span class="badge badge--count" id="inside-count">0</span></h2>
+            <button class="btn btn--secondary btn--small" type="button" id="btn-reload-list">Làm mới</button>
+          </div>
+          <div id="inside-list"><p class="muted">Đang tải...</p></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/format.js"></script>
+  <script src="/js/pages/check-in.js"></script>
+</body>
+</html>

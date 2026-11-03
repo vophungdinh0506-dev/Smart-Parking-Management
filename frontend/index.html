@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi" class="auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tổng quan — Smart Parking</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Tổng quan</h1>
+          <p>Hệ thống quản lý xe ra vào và tính phí gửi xe</p>
+        </div>
+        <button class="btn btn--secondary" id="btn-refresh" type="button">Kiểm tra lại</button>
+      </header>
+
+      <div class="alert alert--info">
+        Số liệu tổng quan (xe trong bãi, lượt vào/ra hôm nay) sẽ được thêm cùng chức năng xe vào/ra.
+      </div>
+
+      <section class="card" aria-labelledby="health-title">
+        <h2 id="health-title">Trạng thái hệ thống</h2>
+        <div id="health-summary" class="muted" style="margin-bottom: 8px">Đang kiểm tra...</div>
+        <ul class="status-list" id="health-list"></ul>
+        <p class="muted" id="health-time"></p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/pages/index.js"></script>
+</body>
+</html>

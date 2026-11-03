@@ -1,0 +1,22 @@
+# Thư viện cài bằng npm / pip (cài lại được bằng npm install, pip install)
+node_modules/
+ai-service/.venv/
+__pycache__/
+*.pyc
+
+# Bí mật — KHÔNG đưa lên Git
+.env
+!.env.example
+
+# Ảnh xe do nhân viên tải lên (dữ liệu vận hành, có thông tin biển số)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Mô hình AI (file lớn) — chia sẻ qua Google Drive, không đưa lên Git
+ai-service/models/
+
+# Log và file hệ thống
+*.log
+Thumbs.db
+.DS_Store
+.vscode/
