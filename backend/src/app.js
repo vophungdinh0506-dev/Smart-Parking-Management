@@ -13,6 +13,9 @@ const recognitionsRouter = require('./routes/recognitions');
 const sessionsRouter = require('./routes/sessions');
 const vehicleTypesRouter = require('./routes/vehicleTypes');
 const imagesRouter = require('./routes/images');
+const pricingRouter = require('./routes/pricing');
+const usersRouter = require('./routes/users');
+const reportsRouter = require('./routes/reports');
 const { apiNotFound, errorHandler } = require('./middlewares/errorHandler');
 
 const FRONTEND_DIR = path.resolve(__dirname, '..', '..', 'frontend');
@@ -42,6 +45,9 @@ function createApp() {
   app.use('/api/sessions', sessionsRouter);
   app.use('/api/vehicle-types', vehicleTypesRouter);
   app.use('/api/images', imagesRouter);
+  app.use('/api/pricing-rules', pricingRouter);
+  app.use('/api/users', usersRouter);
+  app.use('/api/reports', reportsRouter); // chức năng mở rộng
   app.use('/api', apiNotFound); // mọi /api/... chưa khai báo → 404 JSON
 
   // ---- Frontend (HTML/CSS/JS tĩnh) ----

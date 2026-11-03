@@ -20,3 +20,7 @@ ai-service/models/
 Thumbs.db
 .DS_Store
 .vscode/
+
+# Ảnh kiểm thử nhận diện (biển số thật) — không đưa lên Git công khai
+ai-service/dataset/*
+!ai-service/dataset/README.md

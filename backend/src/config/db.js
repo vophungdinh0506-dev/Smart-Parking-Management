@@ -1,8 +1,4 @@
-/**
- * Kết nối SQL Server bằng thư viện mssql.
- * Dùng 1 "connection pool" (nhóm kết nối dùng chung) cho cả ứng dụng,
- * thay vì mở/đóng kết nối mới cho mỗi request.
- */
+
 const sql = require('mssql');
 const config = require('./env');
 

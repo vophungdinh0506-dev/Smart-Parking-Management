@@ -1,13 +1,5 @@
 ﻿/* =====================================================================
    SMART PARKING ITS — 01-schema.sql
-   Tạo database, bảng, khóa, ràng buộc và index.
-   Chạy trong SSMS (hoặc sqlcmd) bằng tài khoản có quyền tạo database.
-
-   An toàn: script KHÔNG xóa gì. Nếu database đã có bảng Users,
-   script dừng lại để tránh ghi đè dữ liệu.
-   Muốn tạo lại từ đầu trên máy dev: tự xóa database SmartParking
-   (chuột phải > Delete trong SSMS) rồi chạy lại.
-
    Quy ước:
    - Thời gian lưu theo UTC (SYSUTCDATETIME). Backend đổi sang giờ VN khi hiển thị/tính phí.
    - Tiền dùng INT, đơn vị VNĐ.

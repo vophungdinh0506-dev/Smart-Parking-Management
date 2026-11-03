@@ -1,11 +1,3 @@
-/**
- * Nhận 1 ảnh từ form (trường "image") và lưu vào thư mục uploads.
- *
- * Kiểm tra 2 lớp:
- *  1. Kiểu file khai báo (mimetype) và dung lượng — do multer kiểm tra.
- *  2. "Chữ ký file" (magic bytes): vài byte đầu của file thật. Đổi tên virus.exe thành
- *     anh.jpg vẫn bị phát hiện vì nội dung không bắt đầu bằng chữ ký của JPEG.
- */
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const crypto = require('node:crypto');

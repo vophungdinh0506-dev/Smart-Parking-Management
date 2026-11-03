@@ -1,10 +1,5 @@
 ﻿/* =====================================================================
    SMART PARKING ITS — 02-seed-required.sql
-   Dữ liệu BẮT BUỘC để hệ thống chạy (không phải dữ liệu demo).
-   Chạy SAU 01-schema.sql. Có thể chạy lại nhiều lần (không tạo trùng).
-
-   Tài khoản admin đầu tiên KHÔNG tạo ở đây (để không lưu mật khẩu trong file).
-   Dùng lệnh:  cd backend  →  npm run create-admin
    ===================================================================== */
 
 USE SmartParking;

@@ -1,8 +1,4 @@
-/**
- * Tạo tài khoản ADMIN đầu tiên (hoặc thêm admin mới).
- * Chạy:  npm run create-admin
- * Mật khẩu được băm bằng bcrypt trước khi lưu — database không bao giờ chứa mật khẩu gốc.
- */
+
 const readline = require('node:readline');
 const bcrypt = require('bcryptjs');
 const { sql, getPool, closePool } = require('../src/config/db');

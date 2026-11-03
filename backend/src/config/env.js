@@ -1,7 +1,3 @@
-/**
- * Đọc cấu hình từ file backend/.env (xem .env.example).
- * Mọi thông tin bí mật (mật khẩu DB, khóa JWT) chỉ nằm ở đây — không bao giờ đưa vào frontend.
- */
 const path = require('node:path');
 
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env'), quiet: true });

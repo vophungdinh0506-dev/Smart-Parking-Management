@@ -38,4 +38,24 @@ function formatVN(date) {
          `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
 }
 
-module.exports = { VN_OFFSET_MS, MINUTE_MS, DAY_MS, nowSeconds, timeToMinutes, formatVN };
+/**
+ * "2026-11-03" (ngày theo lịch Việt Nam) → Date = 00:00 giờ VN của ngày đó (đã đổi sang UTC).
+ * Ném AppError 400 nếu sai định dạng.
+ */
+function parseVnDate(value, field = 'date') {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  const date = m ? new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])) - VN_OFFSET_MS) : null;
+  // Kiểm tra ngược để loại ngày không tồn tại (VD 2026-13-01, 2026-02-30 bị JavaScript tự "tràn" sang tháng sau)
+  if (!date || Number.isNaN(date.getTime()) || new Date(date.getTime() + VN_OFFSET_MS).toISOString().slice(0, 10) !== value) {
+    const AppError = require('./AppError');
+    throw new AppError(400, 'VALIDATION_ERROR', 'Ngày không hợp lệ (định dạng YYYY-MM-DD)', { field });
+  }
+  return date;
+}
+
+/** Date → "YYYY-MM-DD" theo lịch Việt Nam */
+function vnDateKey(date) {
+  return new Date(new Date(date).getTime() + VN_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+module.exports = { VN_OFFSET_MS, MINUTE_MS, DAY_MS, nowSeconds, timeToMinutes, formatVN, parseVnDate, vnDateKey };

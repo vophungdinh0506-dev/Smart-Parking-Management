@@ -9,7 +9,7 @@
  * Thời gian vào do SERVER tạo, không nhận từ frontend.
  */
 const { withTransaction, isUniqueViolation } = require('../config/db');
-const config = require('../config/env');
+const { assertUsableRecognition } = require('./recognitionGuard');
 const recognitionRepo = require('../repositories/recognitionRepo');
 const sessionRepo = require('../repositories/sessionRepo');
 const pricingRepo = require('../repositories/pricingRepo');
@@ -35,13 +35,7 @@ async function checkIn({ recognitionId, plateNumber, vehicleTypeId, userId, ipAd
     const sessionId = await withTransaction(async (tx) => {
       // 1. Ảnh nhận diện (khóa dòng để 2 người không dùng cùng 1 ảnh)
       const rec = await recognitionRepo.findById(recognitionId, tx, { forUpdate: true });
-      if (!rec) throw new AppError(404, 'RECOGNITION_NOT_FOUND', 'Không tìm thấy ảnh đã tải lên. Vui lòng tải ảnh lại.');
-      if (rec.direction !== 'IN') throw new AppError(400, 'WRONG_DIRECTION', 'Ảnh này được tải lên cho xe RA, không dùng cho xe vào.');
-      if (rec.sessionId !== null) throw new AppError(409, 'RECOGNITION_ALREADY_USED', 'Ảnh này đã được dùng để tạo lượt gửi. Vui lòng tải ảnh mới.');
-      const ageMinutes = (Date.now() - new Date(rec.createdAt).getTime()) / 60000;
-      if (ageMinutes > config.upload.maxAgeMinutes) {
-        throw new AppError(400, 'RECOGNITION_EXPIRED', `Ảnh đã tải lên quá ${config.upload.maxAgeMinutes} phút. Vui lòng chụp/tải ảnh mới.`);
-      }
+      assertUsableRecognition(rec, 'IN');
 
       // 2. Loại xe + định dạng biển số theo loại xe
       const vehicleType = await vehicleTypeRepo.findById(vehicleTypeId, tx);

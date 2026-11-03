@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="vi" class="auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biểu phí — Smart Parking</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Biểu phí gửi xe</h1>
+          <p>Biểu phí đang áp dụng, lịch sử thay đổi và công cụ thử tính phí</p>
+        </div>
+      </header>
+
+      <div class="alert alert--info">
+        Khung <strong>thường</strong> tính 1 lượt, khung <strong>đêm</strong> tính trọn gói; xe ở qua khung nào tính khung đó (cộng dồn).
+        Gửi ngắn (≤ số phút quy định) chỉ thu một phần trăm phí khung thường.
+        Đổi giá chỉ áp dụng cho <strong>xe vào sau khi đổi</strong>; xe đang gửi vẫn tính theo giá lúc vào.
+      </div>
+
+      <div id="rule-cards" class="grid-2"><p class="muted">Đang tải...</p></div>
+
+      <section class="card" aria-labelledby="sim-title" style="margin-top: 24px">
+        <h2 id="sim-title">Thử tính phí</h2>
+        <form id="sim-form" class="sim-form" novalidate>
+          <div class="field">
+            <label for="sim-type">Loại xe</label>
+            <select id="sim-type" required></select>
+          </div>
+          <div class="field">
+            <label for="sim-in">Giờ vào</label>
+            <input id="sim-in" type="datetime-local" required>
+          </div>
+          <div class="field">
+            <label for="sim-out">Giờ ra</label>
+            <input id="sim-out" type="datetime-local" required>
+          </div>
+          <div class="field sim-form__action">
+            <button class="btn btn--primary" type="submit" id="btn-sim">Tính phí</button>
+          </div>
+        </form>
+        <div id="sim-error" class="alert alert--error" role="alert" hidden></div>
+        <div id="sim-result" hidden>
+          <table class="fee-table">
+            <thead><tr><th scope="col">Khung tính phí</th><th scope="col" class="num">Số tiền</th></tr></thead>
+            <tbody id="sim-items"></tbody>
+            <tfoot><tr><th scope="row">Tổng</th><td class="num total" id="sim-total"></td></tr></tfoot>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/format.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/pages/pricing.js"></script>
+</body>
+</html>

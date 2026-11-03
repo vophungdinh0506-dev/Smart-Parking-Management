@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi" class="auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doanh thu — Smart Parking</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Doanh thu</h1>
+          <p>Tiền thực thu theo ngày và loại xe <span class="badge badge--extra">Chức năng mở rộng</span></p>
+        </div>
+      </header>
+      <section class="card">
+        <form id="filter-form" class="toolbar">
+          <div class="field"><label for="f-from">Từ ngày</label><input id="f-from" type="date" required></div>
+          <div class="field"><label for="f-to">Đến ngày</label><input id="f-to" type="date" required></div>
+          <div class="segmented toolbar__presets" role="group" aria-label="Chọn nhanh">
+            <button type="button" class="btn btn--secondary btn--small" data-days="7">7 ngày</button>
+            <button type="button" class="btn btn--secondary btn--small" data-days="30">30 ngày</button>
+            <button type="button" class="btn btn--secondary btn--small" data-month="1">Tháng này</button>
+          </div>
+          <button class="btn btn--primary" type="submit">Xem</button>
+        </form>
+        <div id="report-error" class="alert alert--error" role="alert" hidden></div>
+        <div id="report" hidden>
+          <div class="stats" id="stats"></div>
+          <h2 class="section-title" id="chart-title">Doanh thu theo ngày</h2>
+          <div class="chart" id="chart" role="img" aria-labelledby="chart-title"></div>
+          <div class="chart-tooltip" id="chart-tooltip" role="tooltip" hidden></div>
+          <details class="history">
+            <summary>Xem dạng bảng</summary>
+            <div class="table-wrap" id="report-table"></div>
+          </details>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/format.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/pages/reports.js"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 
 **Đề tài:** Xây dựng ứng dụng quản lý xe ra vào và tính phí gửi xe bằng nhận diện biển số
 **Trạng thái:** ĐÃ XÁC NHẬN (27/10/2026) — quy tắc phí ở mục 4 đã được nhóm chốt cho giai đoạn phát triển.
+**Cập nhật 03/11/2026:** đối chiếu với đề cương chính thức của nhóm (`De_tai_quan_ly_xe_ra_vao_nhan_dien_bien_so.docx`), xem mục 10.
 **Ngày:** 27/10/2026
 
 > Các chỗ đánh dấu **[GIẢ ĐỊNH]** là đề xuất để phát triển và kiểm thử, chưa phải quy định chính thức.
@@ -424,3 +425,32 @@ smart-parking-its/
 | 7 | Môi trường | SQL Server đã cài; Node.js v24.14.0 |
 
 Còn mở: thời hạn nộp, bộ ảnh kiểm thử, giả định gửi ngắn trong khung đêm (mục 4.1).
+
+
+---
+
+## 10. Cập nhật 03/11/2026 — đối chiếu đề cương và phần đã xây dựng
+
+### 10.1 Phạm vi
+| Chức năng | Đề cương | Trạng thái |
+|---|---|---|
+| Nhận diện biển số, xe vào/ra, tính phí (FR01–FR10) | Bắt buộc | Đã xây dựng |
+| Khu vực thiết lập biểu phí | Mục 3.7 | Trang **Biểu phí** |
+| Đăng nhập, tài khoản, admin sửa/hủy lượt | Nhóm bổ sung (phục vụ an toàn dữ liệu) | Đã xây dựng |
+| Lịch sử gửi xe, Doanh thu | Đề cương xếp **ngoài phạm vi chính** | Làm thêm, ghi rõ "Chức năng mở rộng" trên giao diện |
+
+### 10.2 Mô hình nhận diện đã chọn
+**fast-alpr**: YOLOv9-tiny phát hiện vùng biển số → mô hình OCR "global" đọc ký tự. Mô hình chạy trên CPU qua ONNX Runtime và đọc được biển 2 dòng.
+Độ tin cậy gửi cho backend = **độ tin cậy thấp nhất trong các ký tự**, nghĩa là chỉ cần 1 ký tự mờ là hệ thống cảnh báo nhân viên.
+Độ chính xác trên ảnh thật: đo bằng `ai-service/evaluate.py` (xem `docs/03-kiem-thu.md`).
+
+### 10.3 API bổ sung so với mục 6
+| Method | Đường dẫn | Quyền | Mô tả |
+|---|---|---|---|
+| POST | `/api/pricing-rules/simulate` | STAFF+ | Thử tính phí (không lưu) |
+| GET | `/api/pricing-rules/history?vehicleTypeId=` | STAFF+ | Lịch sử phiên bản giá |
+| POST | `/api/users/:id/reset-password` | ADMIN | Đặt lại mật khẩu |
+| GET | `/api/sessions?from=&to=` | STAFF+ | Lọc lịch sử theo ngày vào (giờ VN) |
+| GET | `/api/reports/revenue?from=&to=` | ADMIN | Doanh thu theo ngày và loại xe (mở rộng) |
+
+Luồng xe ra trả lỗi `404 SESSION_NOT_FOUND` kèm `details.suggestions`, là danh sách các xe đang gửi có cùng 4 số cuối, giúp nhân viên phát hiện trường hợp AI đọc sai 1–2 ký tự.

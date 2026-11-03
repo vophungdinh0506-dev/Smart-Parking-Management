@@ -1,9 +1,4 @@
-/**
- * Đặt lại mật khẩu cho 1 tài khoản (khi quên mật khẩu).
- * Chạy:  npm run reset-password
- * Mật khẩu KHÔNG thể xem lại vì database chỉ lưu chuỗi băm bcrypt (một chiều) → chỉ có thể đặt mật khẩu mới.
- * Lệnh này chạy trên máy chủ (cần file .env kết nối database), nên chỉ người quản trị máy mới dùng được.
- */
+
 const readline = require('node:readline');
 const bcrypt = require('bcryptjs');
 const { sql, getPool, closePool } = require('../src/config/db');

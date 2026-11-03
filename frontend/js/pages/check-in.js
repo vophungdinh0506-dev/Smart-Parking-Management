@@ -5,146 +5,46 @@
  */
 (() => {
 const { escapeHtml, showToast, setButtonLoading } = window.ui;
-const MAX_BYTES = 5 * 1024 * 1024;
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const { createImageIntake, showRecognition, createInsideList } = window.components;
+const $ = (id) => document.getElementById(id);
 
 const els = {
-  uploadForm: document.getElementById('upload-form'),
-  input: document.getElementById('image-input'),
-  dropzone: document.getElementById('dropzone'),
-  preview: document.getElementById('image-preview'),
-  hint: document.getElementById('dropzone-hint'),
-  btnRecognize: document.getElementById('btn-recognize'),
-  confirmForm: document.getElementById('confirm-form'),
-  status: document.getElementById('recognition-status'),
-  cropWrap: document.getElementById('crop-wrap'),
-  cropImage: document.getElementById('crop-image'),
-  candidates: document.getElementById('candidates'),
-  plate: document.getElementById('plate-input'),
-  plateHint: document.getElementById('plate-hint'),
-  vehicleTypes: document.getElementById('vehicle-types'),
-  confirmError: document.getElementById('confirm-error'),
-  btnConfirm: document.getElementById('btn-confirm'),
-  btnReset: document.getElementById('btn-reset'),
-  insideList: document.getElementById('inside-list'),
-  insideCount: document.getElementById('inside-count'),
-  btnReload: document.getElementById('btn-reload-list'),
+  confirmForm: $('confirm-form'),
+  plate: $('plate-input'),
+  vehicleTypes: $('vehicle-types'),
+  confirmError: $('confirm-error'),
+  btnConfirm: $('btn-confirm'),
 };
-
-let selectedFile = null;
-let previewUrl = null;
 let recognition = null; // kết quả bước 1
 
-// Màu của khung thông báo theo trạng thái nhận diện
-const STATUS_ALERT = {
-  SUCCESS: 'alert--success', LOW_CONFIDENCE: 'alert--warn', MULTIPLE: 'alert--warn',
-  NOT_FOUND: 'alert--warn', ERROR: 'alert--error',
-};
+const insideList = createInsideList({ container: $('inside-list'), countEl: $('inside-count'), reloadBtn: $('btn-reload-list') });
 
-/* ---------------- Bước 1: chọn ảnh ---------------- */
-function selectFile(file) {
-  els.confirmForm.hidden = true;
-  recognition = null;
-  if (!file) return;
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    showToast('Chỉ nhận ảnh JPEG, PNG hoặc WebP', 'error');
-    return;
-  }
-  if (file.size > MAX_BYTES) {
-    showToast('Ảnh vượt quá 5 MB', 'error');
-    return;
-  }
-  selectedFile = file;
-  if (previewUrl) URL.revokeObjectURL(previewUrl);
-  previewUrl = URL.createObjectURL(file);
-  els.preview.src = previewUrl;
-  els.preview.hidden = false;
-  els.hint.hidden = true;
-  els.dropzone.classList.add('has-image');
-  els.btnRecognize.disabled = false;
-  els.btnRecognize.focus();
-}
-
-els.input.addEventListener('change', () => selectFile(els.input.files[0]));
-['dragenter', 'dragover'].forEach((t) => els.dropzone.addEventListener(t, (e) => {
-  e.preventDefault(); els.dropzone.classList.add('is-dragover');
-}));
-['dragleave', 'drop'].forEach((t) => els.dropzone.addEventListener(t, (e) => {
-  e.preventDefault(); els.dropzone.classList.remove('is-dragover');
-}));
-els.dropzone.addEventListener('drop', (e) => selectFile(e.dataTransfer.files[0]));
-
-els.uploadForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  if (!selectedFile) return;
-
-  const formData = new FormData();
-  formData.append('direction', 'IN');
-  formData.append('image', selectedFile);
-
-  setButtonLoading(els.btnRecognize, true, 'Đang nhận diện...');
-  els.input.disabled = true;
-  const result = await window.api.request('/api/recognitions', { method: 'POST', formData });
-  setButtonLoading(els.btnRecognize, false);
-  els.input.disabled = false;
-
-  if (!result.ok) {
-    showToast(result.error.message, 'error', 6000);
-    return;
-  }
-  recognition = result.data;
-  els.btnRecognize.disabled = true; // ảnh này đã gửi rồi
-  showRecognition(recognition);
+const intake = createImageIntake({
+  direction: 'IN',
+  form: $('upload-form'), input: $('image-input'), dropzone: $('dropzone'),
+  preview: $('image-preview'), hint: $('dropzone-hint'), button: $('btn-recognize'),
+  onFileChanged: () => { els.confirmForm.hidden = true; recognition = null; },
+  onRecognized: (r) => {
+    recognition = r;
+    els.confirmForm.hidden = false;
+    els.confirmError.hidden = true;
+    els.btnConfirm.disabled = false;
+    showRecognition(r, {
+      statusEl: $('recognition-status'), cropWrap: $('crop-wrap'), cropImage: $('crop-image'),
+      candidatesEl: $('candidates'), plateInput: els.plate, onPick: suggestVehicleType,
+    });
+    suggestVehicleType(r.plate);
+    els.plate.focus();
+    els.plate.select();
+    els.confirmForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  },
 });
 
-/* ---------------- Bước 2: hiển thị kết quả ---------------- */
-function showRecognition(r) {
-  els.confirmForm.hidden = false;
-  els.confirmError.hidden = true;
-
-  let message = r.message;
-  if (r.confidence !== null && r.confidence !== undefined) {
-    message += ` (Độ tin cậy: ${Math.round(r.confidence * 100)}%)`;
-  }
-  els.status.className = `alert ${STATUS_ALERT[r.status] ?? 'alert--info'}`;
-  els.status.textContent = message;
-
-  els.cropWrap.hidden = !r.cropUrl;
-  if (r.cropUrl) els.cropImage.src = r.cropUrl;
-
-  // Nhiều biển số → cho nhân viên bấm chọn
-  if (r.status === 'MULTIPLE' && r.candidates.length) {
-    els.candidates.innerHTML = '<span class="muted small">Chọn biển số đúng:</span>' + r.candidates.map((c) =>
-      `<button type="button" class="chip" data-plate="${escapeHtml(c.plate)}">${escapeHtml(c.plate)}
-        ${c.confidence !== null ? `<span class="muted">${Math.round(c.confidence * 100)}%</span>` : ''}</button>`).join('');
-    els.candidates.hidden = false;
-  } else {
-    els.candidates.hidden = true;
-    els.candidates.innerHTML = '';
-  }
-
-  els.plate.value = r.plate ?? '';
-  els.plate.classList.toggle('is-warning', r.status !== 'SUCCESS');
-  suggestVehicleType(r.plate);
-  els.plate.focus();
-  els.plate.select();
-  els.confirmForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-els.candidates.addEventListener('click', (e) => {
-  const chip = e.target.closest('.chip');
-  if (!chip) return;
-  els.plate.value = chip.dataset.plate;
-  suggestVehicleType(chip.dataset.plate);
-  els.candidates.querySelectorAll('.chip').forEach((c) => c.classList.toggle('is-selected', c === chip));
-});
-
-/** Gợi ý loại xe từ dạng biển số: biển xe máy có thêm 1 chữ số sau chữ cái (59-X1...) */
+/** Gợi ý loại xe từ dạng biển số: 2 số + chữ + 1 số + 5 số (59-X1 123.45) chắc chắn là xe máy */
 function suggestVehicleType(plate) {
   const p = (plate || '').toUpperCase().replace(/[\s.\-_]/g, '');
-  let code = null;
-  if (/^[0-9]{2}[A-ZĐ]{1,2}[0-9][0-9]{5}$/.test(p)) code = 'MOTORBIKE';   // 9–10 ký tự: chắc chắn xe máy
-  const radio = code && els.vehicleTypes.querySelector(`input[data-code="${code}"]`);
+  if (!/^[0-9]{2}[A-ZĐ]{1,2}[0-9][0-9]{5}$/.test(p)) return;
+  const radio = els.vehicleTypes.querySelector('input[data-code="MOTORBIKE"]');
   if (radio && !els.vehicleTypes.querySelector('input:checked')) radio.checked = true;
 }
 
@@ -162,25 +62,21 @@ async function loadVehicleTypes() {
 }
 
 function resetAll() {
-  selectedFile = null;
   recognition = null;
-  els.uploadForm.reset();
+  intake.reset();
   els.confirmForm.reset();
   els.confirmForm.hidden = true;
-  els.preview.hidden = true;
-  els.preview.removeAttribute('src');
-  if (previewUrl) URL.revokeObjectURL(previewUrl);
-  previewUrl = null;
-  els.hint.hidden = false;
-  els.dropzone.classList.remove('has-image');
-  els.btnRecognize.disabled = true;
   els.btnConfirm.disabled = false;
   els.confirmError.hidden = true;
 }
+$('btn-reset').addEventListener('click', resetAll);
 
-els.btnReset.addEventListener('click', resetAll);
+function showConfirmError(message, focusEl) {
+  els.confirmError.textContent = message;
+  els.confirmError.hidden = false;
+  focusEl?.focus();
+}
 
-/* ---------------- Xác nhận xe vào ---------------- */
 els.confirmForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   els.confirmError.hidden = true;
@@ -199,11 +95,9 @@ els.confirmForm.addEventListener('submit', async (event) => {
   setButtonLoading(els.btnConfirm, false);
 
   if (!result.ok) {
-    const focusPlate = result.error.details?.field === 'plateNumber';
-    showConfirmError(result.error.message, focusPlate ? els.plate : null);
-    // Ảnh đã bị dùng / hết hạn → phải tải ảnh mới
+    showConfirmError(result.error.message, result.error.details?.field === 'plateNumber' ? els.plate : null);
     if (['RECOGNITION_ALREADY_USED', 'RECOGNITION_EXPIRED', 'RECOGNITION_NOT_FOUND'].includes(result.error.code)) {
-      els.btnConfirm.disabled = true;
+      els.btnConfirm.disabled = true; // phải tải ảnh mới
     }
     return;
   }
@@ -211,47 +105,11 @@ els.confirmForm.addEventListener('submit', async (event) => {
   const s = result.data.session;
   showToast(`Đã tạo lượt gửi: ${s.plateDisplay} (${s.vehicleType.name}) lúc ${window.format.dateTime(s.checkInAt)}`, 'success', 6000);
   resetAll();
-  loadInsideList();
+  insideList.load();
 });
-
-function showConfirmError(message, focusEl) {
-  els.confirmError.textContent = message;
-  els.confirmError.hidden = false;
-  if (focusEl) focusEl.focus();
-}
-
-/* ---------------- Danh sách xe trong bãi ---------------- */
-async function loadInsideList() {
-  const result = await window.api.request('/api/sessions?status=OPEN&pageSize=20');
-  if (!result.ok) {
-    els.insideList.innerHTML = `<div class="alert alert--error">${escapeHtml(result.error.message)}</div>`;
-    return;
-  }
-  const { items, total } = result.data;
-  els.insideCount.textContent = total;
-  if (!items.length) {
-    els.insideList.innerHTML = '<div class="empty">Chưa có xe nào trong bãi.</div>';
-    return;
-  }
-  els.insideList.innerHTML = `
-    <ul class="vehicle-list">
-      ${items.map((s) => `
-        <li class="vehicle-list__item">
-          <div>
-            <div class="plate">${escapeHtml(s.plateDisplay)}</div>
-            <div class="muted small">${escapeHtml(s.vehicleType.name)} · vào ${escapeHtml(window.format.dateTime(s.checkInAt))}
-              ${s.checkInPlateEdited ? ' · <span title="Biển số được nhân viên nhập/sửa tay">sửa tay</span>' : ''}</div>
-          </div>
-          <span class="muted small">${escapeHtml(window.format.duration(s.checkInAt))}</span>
-        </li>`).join('')}
-    </ul>
-    ${total > items.length ? `<p class="muted small">Đang hiện ${items.length}/${total} xe mới nhất.</p>` : ''}`;
-}
-
-els.btnReload.addEventListener('click', loadInsideList);
 
 window.ui.ready.then(() => {
   loadVehicleTypes();
-  loadInsideList();
+  insideList.load();
 });
 })();

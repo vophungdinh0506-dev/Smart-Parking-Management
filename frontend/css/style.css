@@ -158,7 +158,7 @@ body {
 .auth-pending .layout { visibility: hidden; }
 
 .sidebar { display: flex; flex-direction: column; }
-.sidebar nav { flex: 1; }
+.sidebar nav { flex: 1; min-width: 0; max-width: 100%; } /* min-width: 0 để menu cuộn ngang trên điện thoại thay vì làm tràn trang */
 .sidebar__user {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   margin-top: var(--space-4);
@@ -279,10 +279,122 @@ fieldset.field legend { font-weight: 600; margin-bottom: var(--space-1); padding
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
   padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border);
 }
-.vehicle-list__item:last-child { border-bottom: 0; }
 .plate { font-family: var(--font-mono); font-weight: 700; font-size: 16px; }
 .empty { padding: var(--space-5); text-align: center; color: var(--color-muted); background: var(--color-bg); border-radius: 6px; }
 
 @media (max-width: 1024px) {
   .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* =====================================================================
+   Xe ra bãi: so sánh ảnh, bảng phí, hộp xác nhận
+   ===================================================================== */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.btn--large { min-height: 48px; padding: 12px 24px; font-size: 16px; }
+.btn--danger { background: var(--color-danger); color: #fff; }
+.btn--danger:hover { background: #a61f1f; }
+
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4); }
+.compare figure { margin: 0; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; }
+.compare img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: #10151d; }
+.compare figcaption { padding: var(--space-1) var(--space-2); font-size: 13px; font-weight: 600; text-align: center; }
+
+.info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-4); margin: 0 0 var(--space-4); }
+.info-grid dt { font-size: 13px; color: var(--color-muted); }
+.info-grid dd { margin: 0; font-weight: 600; }
+
+.fee-table { width: 100%; border-collapse: collapse; margin-bottom: var(--space-2); }
+.fee-table th, .fee-table td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-border); text-align: left; }
+.fee-table thead th { font-size: 13px; color: var(--color-muted); font-weight: 600; background: var(--color-bg); }
+.fee-table .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fee-table tfoot th, .fee-table tfoot td { border-bottom: 0; font-weight: 700; }
+.fee-table .total { font-size: 24px; color: var(--color-primary); }
+
+.vehicle-list__item.is-clickable {
+  width: 100%; font: inherit; color: inherit; text-align: left; background: none; border: 0;
+  border-bottom: 1px solid var(--color-border); cursor: pointer; border-radius: 0;
+}
+.vehicle-list li:last-child .vehicle-list__item { border-bottom: 0; }
+.vehicle-list__item.is-clickable:hover { background: #eef3ff; }
+.vehicle-list__item.is-clickable:focus-visible { outline: 3px solid #9bb8ff; outline-offset: -3px; }
+.vehicle-list__meta { display: block; }
+
+.dialog {
+  border: 0; border-radius: var(--radius); padding: var(--space-5);
+  width: min(440px, calc(100vw - 32px)); box-shadow: 0 10px 40px rgba(16, 24, 40, 0.25);
+  color: var(--color-text);
+}
+.dialog::backdrop { background: rgba(16, 24, 40, 0.5); }
+.dialog__title { font-size: 18px; margin: 0 0 var(--space-3); }
+.dialog__amount { font-size: 32px; font-weight: 700; color: var(--color-primary); margin: var(--space-2) 0; }
+.dialog__actions { justify-content: flex-end; margin-top: var(--space-4); }
+.dialog .field textarea { width: 100%; font: inherit; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 6px; min-height: 80px; }
+
+@media (max-width: 640px) {
+  .compare, .info-grid { grid-template-columns: 1fr 1fr; }
+  .fee-table .total { font-size: 20px; }
+}
+
+/* =====================================================================
+   Biểu phí
+   ===================================================================== */
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--space-4); }
+.history { margin-top: var(--space-4); border-top: 1px solid var(--color-border); padding-top: var(--space-3); }
+.history summary { cursor: pointer; font-weight: 600; color: var(--color-primary); }
+.history__body { margin-top: var(--space-3); overflow-x: auto; }
+.history .fee-table { font-size: 13px; color: var(--color-text); }
+.sim-form { display: grid; grid-template-columns: 1fr 1.3fr 1.3fr auto; gap: var(--space-3); align-items: end; }
+.sim-form .field { margin-bottom: var(--space-3); }
+@media (max-width: 768px) {
+  .sim-form, .form-grid { grid-template-columns: 1fr; }
+}
+
+/* =====================================================================
+   Bảng dữ liệu, bộ lọc, thống kê, biểu đồ
+   ===================================================================== */
+.badge--info { background: #eef3ff; color: var(--color-primary-dark); }
+.badge--extra { background: #f1ecff; color: #5b3cc4; font-size: 12px; vertical-align: middle; }
+.section-title { font-size: 16px; margin: var(--space-5) 0 var(--space-3); }
+
+.toolbar { display: flex; align-items: flex-end; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-4); }
+.toolbar .field { margin-bottom: 0; min-width: 150px; }
+.toolbar__spacer { flex: 1; }
+.toolbar__presets { flex: 0 0 auto; }
+
+.table-wrap { overflow-x: auto; position: relative; } /* relative: giữ chữ ẩn .sr-only trong khung cuộn, không làm tràn trang */
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.data-table th, .data-table td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-border); text-align: left; vertical-align: middle; }
+.data-table thead th { font-size: 13px; color: var(--color-muted); font-weight: 600; background: var(--color-bg); white-space: nowrap; }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table tbody tr:hover { background: #f8faff; }
+.row-actions { display: flex; min-width: max-content; gap: var(--space-2); flex-wrap: wrap; justify-content: flex-end; }
+.thumb { width: 72px; height: 48px; object-fit: cover; border-radius: 4px; background: var(--color-bg); display: block; }
+.pager { display: flex; align-items: center; justify-content: center; gap: var(--space-3); margin-top: var(--space-4); }
+.pager:empty { display: none; }
+.compare__empty { aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; color: var(--color-muted); }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-3); }
+.stat { border: 1px solid var(--color-border); border-radius: 6px; padding: var(--space-3) var(--space-4); }
+.stat__label { font-size: 13px; color: var(--color-muted); }
+.stat__value { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat__sub { font-size: 13px; color: var(--color-muted); }
+
+#report { position: relative; }
+.chart { position: relative; height: 260px; margin: 0 0 var(--space-4) 48px; }
+.chart__grid { position: absolute; inset: 0 0 24px 0; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+.chart__gridline { border-top: 1px solid var(--color-border); position: relative; height: 0; }
+.chart__gridline span { position: absolute; right: calc(100% + 8px); top: -9px; font-size: 12px; color: var(--color-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.chart__bars { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 2px; }
+.chart__col { position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+  border: 0; background: none; padding: 0 0 24px; cursor: default; font: inherit; color: inherit; min-width: 0; }
+.chart__bar { width: min(28px, 70%); background: var(--color-primary); border-radius: 4px 4px 0 0; min-height: 0; }
+.chart__col.is-active .chart__bar, .chart__col:hover .chart__bar { background: var(--color-primary-dark); }
+.chart__col:focus-visible { outline: 2px solid #9bb8ff; outline-offset: 2px; }
+.chart__label { position: absolute; bottom: 4px; font-size: 12px; color: var(--color-muted); white-space: nowrap; }
+.chart-tooltip { position: absolute; z-index: 10; background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: 6px; box-shadow: var(--shadow); padding: var(--space-2) var(--space-3); font-size: 13px; pointer-events: none; white-space: nowrap; }
+
+@media (max-width: 768px) {
+  .toolbar .field { min-width: 0; flex: 1 1 140px; }
+  .chart { height: 200px; }
 }

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi" class="auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xe đang gửi — Smart Parking</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Xe đang gửi</h1>
+          <p>Danh sách xe đang ở trong bãi. Quản trị viên có thể sửa hoặc hủy lượt gửi tạo nhầm.</p>
+        </div>
+      </header>
+      <section class="card">
+        <form id="filter-form" class="toolbar" role="search">
+          <div class="field"><label for="f-plate">Tìm biển số</label>
+            <input id="f-plate" type="search" placeholder="VD: 51F hoặc 12345" maxlength="12" autocomplete="off"></div>
+          <button class="btn btn--secondary" type="submit">Tìm</button>
+          <span class="toolbar__spacer"></span>
+          <span class="muted" id="result-count"></span>
+        </form>
+        <div id="table-wrap" class="table-wrap"><p class="muted">Đang tải...</p></div>
+        <div class="pager" id="pager"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/format.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/pages/sessions.js"></script>
+</body>
+</html>

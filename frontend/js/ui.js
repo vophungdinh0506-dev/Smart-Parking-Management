@@ -44,17 +44,18 @@ const ROLE_LABEL = { ADMIN: 'Quản trị viên', STAFF: 'Nhân viên' };
 /**
  * Danh sách trang trong menu.
  * ready = false: trang chưa làm (hiện mờ, nhãn "Sắp có") — làm xong trang nào thì đổi thành true.
+ * extra = true: chức năng mở rộng (ngoài phạm vi chính của đề cương).
  * roles: quyền được thấy trang. Đây chỉ là ẩn menu cho gọn; backend mới là nơi chặn quyền thật.
  */
 const NAV_ITEMS = [
-  { href: '/index.html',     label: 'Tổng quan',      ready: true,  roles: ['ADMIN', 'STAFF'] },
-  { href: '/check-in.html',  label: 'Xe vào bãi',     ready: true,  roles: ['ADMIN', 'STAFF'] },
-  { href: '/check-out.html', label: 'Xe ra bãi',      ready: false, roles: ['ADMIN', 'STAFF'] },
-  { href: '/sessions.html',  label: 'Xe đang gửi',    ready: false, roles: ['ADMIN', 'STAFF'] },
-  { href: '/history.html',   label: 'Lịch sử gửi xe', ready: false, roles: ['ADMIN', 'STAFF'] },
-  { href: '/pricing.html',   label: 'Bảng giá',       ready: false, roles: ['ADMIN', 'STAFF'] },
-  { href: '/reports.html',   label: 'Doanh thu',      ready: false, roles: ['ADMIN'] },
-  { href: '/users.html',     label: 'Tài khoản',      ready: false, roles: ['ADMIN'] },
+  { href: '/index.html',     label: 'Tổng quan',      ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/check-in.html',  label: 'Xe vào bãi',     ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/check-out.html', label: 'Xe ra bãi',      ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/sessions.html',  label: 'Xe đang gửi',    ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/pricing.html',   label: 'Biểu phí',       ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/history.html',   label: 'Lịch sử gửi xe', ready: true, roles: ['ADMIN', 'STAFF'], extra: true },
+  { href: '/reports.html',   label: 'Doanh thu',      ready: true, roles: ['ADMIN'], extra: true },
+  { href: '/users.html',     label: 'Tài khoản',      ready: true, roles: ['ADMIN'] },
 ];
 // Trang Đăng nhập (/login.html) không nằm trong menu.
 

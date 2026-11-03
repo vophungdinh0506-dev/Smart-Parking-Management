@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="vi" class="auth-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xe ra bãi — Smart Parking</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Xe ra bãi</h1>
+          <p>Tải ảnh xe ra → xác nhận biển số → kiểm tra phí → xác nhận đã thu tiền</p>
+        </div>
+      </header>
+
+      <div class="grid-2">
+        <section class="card" aria-labelledby="exit-title">
+          <h2 id="exit-title">Xử lý xe ra</h2>
+
+          <!-- Bước 1: ảnh xe ra -->
+          <form id="upload-form" novalidate>
+            <div class="step-label"><span class="step-num">1</span> Ảnh xe tại cổng ra</div>
+            <label class="dropzone" id="dropzone" for="image-input">
+              <input id="image-input" name="image" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+              <img id="image-preview" alt="Ảnh xe ra đã chọn" hidden>
+              <span class="dropzone__hint" id="dropzone-hint">
+                <strong>Bấm để chọn ảnh</strong> hoặc kéo thả ảnh vào đây<br>
+                <span class="muted">JPEG, PNG, WebP · tối đa 5 MB</span>
+              </span>
+            </label>
+            <p class="muted small">Chưa có camera: nhân viên tải ảnh chụp xe lên. Camera thật sẽ được tích hợp sau.</p>
+            <button class="btn btn--primary" type="submit" id="btn-recognize" disabled>Nhận diện biển số</button>
+          </form>
+
+          <!-- Bước 2: xác nhận biển số → tìm lượt gửi -->
+          <form id="plate-form" novalidate hidden>
+            <hr class="divider">
+            <div class="step-label"><span class="step-num">2</span> Xác nhận biển số</div>
+            <div id="recognition-status" class="alert" role="status"></div>
+            <div id="crop-wrap" class="crop" hidden>
+              <span class="muted small">Vùng biển số AI phát hiện:</span>
+              <img id="crop-image" alt="Ảnh biển số đã cắt">
+            </div>
+            <div id="candidates" class="candidates" hidden></div>
+            <div class="field">
+              <label for="plate-input">Biển số xe <span class="required">*</span></label>
+              <input id="plate-input" name="plateNumber" type="text" class="plate-input" maxlength="20"
+                     autocomplete="off" spellcheck="false" placeholder="VD: 51F-123.45 hoặc 59-X1 123.45" required>
+              <span class="field__hint">Đối chiếu với ảnh. Có thể bấm vào xe trong danh sách bên phải để điền nhanh.</span>
+            </div>
+            <div id="lookup-error" class="alert alert--error" role="alert" hidden></div>
+            <div id="suggestions" class="candidates" hidden></div>
+            <div class="actions">
+              <button class="btn btn--primary" type="submit" id="btn-lookup">Tìm lượt gửi &amp; tính phí</button>
+              <button class="btn btn--secondary" type="button" id="btn-reset">Hủy, chọn ảnh khác</button>
+            </div>
+          </form>
+
+          <!-- Bước 3: thông tin lượt gửi + phí -->
+          <section id="fee-panel" hidden aria-labelledby="fee-title">
+            <hr class="divider">
+            <div class="step-label" id="fee-title"><span class="step-num">3</span> Đối chiếu và thu phí</div>
+
+            <div class="compare">
+              <figure>
+                <img id="img-in" alt="Ảnh xe lúc vào">
+                <figcaption>Lúc vào</figcaption>
+              </figure>
+              <figure>
+                <img id="img-out" alt="Ảnh xe lúc ra">
+                <figcaption>Lúc ra</figcaption>
+              </figure>
+            </div>
+
+            <dl class="info-grid" id="session-info"></dl>
+
+            <table class="fee-table">
+              <caption class="sr-only">Chi tiết cách tính phí</caption>
+              <thead><tr><th scope="col">Khung tính phí</th><th scope="col" class="num">Số tiền</th></tr></thead>
+              <tbody id="fee-items"></tbody>
+              <tfoot><tr><th scope="row">Tổng cần thu</th><td class="num total" id="fee-total"></td></tr></tfoot>
+            </table>
+            <p class="muted small" id="fee-note"></p>
+
+            <div id="pay-error" class="alert alert--error" role="alert" hidden></div>
+            <div class="actions">
+              <button class="btn btn--primary btn--large" type="button" id="btn-pay">Đã thu tiền &amp; cho xe ra</button>
+              <button class="btn btn--secondary" type="button" id="btn-cancel-pay">Hủy</button>
+            </div>
+          </section>
+        </section>
+
+        <section class="card" aria-labelledby="inside-title">
+          <div class="card__header">
+            <h2 id="inside-title">Xe đang trong bãi <span class="badge badge--count" id="inside-count">0</span></h2>
+            <button class="btn btn--secondary btn--small" type="button" id="btn-reload-list">Làm mới</button>
+          </div>
+          <div id="inside-list"><p class="muted">Đang tải...</p></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/format.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/pages/check-out.js"></script>
+</body>
+</html>

@@ -1,7 +1,3 @@
-/**
- * Middleware xác thực (đã đăng nhập chưa?) và phân quyền (có đủ quyền không?).
- * Phân quyền PHẢI làm ở backend; ẩn nút trên giao diện chỉ để dễ dùng, không phải bảo mật.
- */
 const config = require('../config/env');
 const authService = require('../services/authService');
 const AppError = require('../utils/AppError');
