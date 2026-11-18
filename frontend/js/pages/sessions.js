@@ -23,10 +23,19 @@ async function load() {
   const { items, total } = result.data;
   $('result-count').textContent = `${total} xe`;
   if (!items.length) {
-    wrap.innerHTML = `<div class="empty">${plate ? 'Không có xe nào khớp biển số đã nhập.' : 'Chưa có xe nào trong bãi.'}</div>`;
-    $('pager').innerHTML = '';
-    return;
-  }
+  wrap.innerHTML = `
+    <div class="sessions-empty">
+      <div class="sessions-empty__icon">
+        <i class="fa-solid fa-car-side" aria-hidden="true"></i>
+      </div>
+      <h3>${plate ? 'Không tìm thấy xe phù hợp' : 'Chưa có xe nào trong bãi'}</h3>
+      <p>${plate
+        ? 'Không có xe nào khớp với biển số đã nhập.'
+        : 'Các lượt gửi xe sẽ xuất hiện tại đây khi có dữ liệu.'}</p>
+    </div>`;
+  $('pager').innerHTML = '';
+  return;
+}
   const isAdmin = user.role === 'ADMIN';
   wrap.innerHTML = `
     <table class="data-table">

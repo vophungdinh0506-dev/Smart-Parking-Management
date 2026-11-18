@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Xe ra bãi — Smart Parking</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
   <div class="layout">
@@ -20,8 +21,12 @@
 
       <div class="grid-2">
         <section class="card" aria-labelledby="exit-title">
-          <h2 id="exit-title">Xử lý xe ra</h2>
-
+          <div class="intake-heading"><div class="intake-heading__icon"><i class="fa-solid fa-car-side" aria-hidden="true"></i></div>
+          <div><h2 id="exit-title">Xử lý xe ra</h2>
+            <p>Tải ảnh tại cổng ra để nhận diện biển số và kiểm tra phí gửi xe.</p>
+          </div>
+        </div>
+          
           <!-- Bước 1: ảnh xe ra -->
           <form id="upload-form" novalidate>
             <div class="step-label"><span class="step-num">1</span> Ảnh xe tại cổng ra</div>
@@ -29,12 +34,16 @@
               <input id="image-input" name="image" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
               <img id="image-preview" alt="Ảnh xe ra đã chọn" hidden>
               <span class="dropzone__hint" id="dropzone-hint">
+                <span class="dropzone__icon">
+                  <i class="fa-solid fa-images" aria-hidden="true"></i>
+                </span>
                 <strong>Bấm để chọn ảnh</strong> hoặc kéo thả ảnh vào đây<br>
                 <span class="muted">JPEG, PNG, WebP · tối đa 5 MB</span>
               </span>
             </label>
             <p class="muted small">Chưa có camera: nhân viên tải ảnh chụp xe lên. Camera thật sẽ được tích hợp sau.</p>
-            <button class="btn btn--primary" type="submit" id="btn-recognize" disabled>Nhận diện biển số</button>
+            <button class="btn btn--primary btn--recognize" type="submit" id="btn-recognize" disabled><i class="fa-solid fa-expand" aria-hidden="true"></i>
+              <span>Nhận diện biển số</span></button>
           </form>
 
           <!-- Bước 2: xác nhận biển số → tìm lượt gửi -->
@@ -95,13 +104,27 @@
           </section>
         </section>
 
+        
         <section class="card" aria-labelledby="inside-title">
-          <div class="card__header">
-            <h2 id="inside-title">Xe đang trong bãi <span class="badge badge--count" id="inside-count">0</span></h2>
-            <button class="btn btn--secondary btn--small" type="button" id="btn-reload-list">Làm mới</button>
+          <div class="card__header inside-heading">
+            <div class="inside-heading__info">
+              <div class="inside-heading__icon">
+                <i class="fa-solid fa-car-tunnel" aria-hidden="true"></i>
+              </div>
+              <div>
+                <h2 id="inside-title">Xe đang trong bãi <span class="badge badge--count" id="inside-count">0</span></h2>
+                <p>Danh sách xe hiện đang gửi</p>
+              </div>
+            </div>
+
+            <button class="btn btn--secondary btn--small inside-heading__reload" type="button" id="btn-reload-list">
+              <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Làm mới
+            </button>
           </div>
+
           <div id="inside-list"><p class="muted">Đang tải...</p></div>
         </section>
+
       </div>
     </main>
   </div>

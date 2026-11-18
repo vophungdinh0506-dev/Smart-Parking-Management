@@ -106,42 +106,89 @@ function showRecognition(r, { statusEl, cropWrap, cropImage, candidatesEl, plate
 
 /* ================= Danh sách xe trong bãi ================= */
 function createInsideList({ container, countEl, reloadBtn, onSelect }) {
+
   async function load() {
-    const result = await window.api.request('/api/sessions?status=OPEN&pageSize=20');
+    const result = await window.api.request(
+      '/api/sessions?status=OPEN&pageSize=20'
+    );
+
     if (!result.ok) {
-      container.innerHTML = `<div class="alert alert--error">${escapeHtml(result.error.message)}</div>`;
+      container.innerHTML = `
+        <div class="alert alert--error">
+          ${escapeHtml(result.error.message)}
+        </div>`;
       return;
     }
+
     const { items, total } = result.data;
     countEl.textContent = total;
+
+    // Không có xe trong bãi
     if (!items.length) {
-      container.innerHTML = '<div class="empty">Chưa có xe nào trong bãi.</div>';
+      container.innerHTML = `
+        <div class="empty">
+          Chưa có xe nào trong bãi.
+        </div>`;
       return;
     }
-    const tag = onSelect ? 'button' : 'div';
+
     container.innerHTML = `
-      <ul class="vehicle-list">
-        ${items.map((s) => `
-          <li>
-            <${tag} class="vehicle-list__item${onSelect ? ' is-clickable' : ''}" ${onSelect ? `type="button" data-plate="${escapeHtml(s.plateNumber)}" title="Điền biển số này"` : ''}>
-              <span>
-                <span class="plate">${escapeHtml(s.plateDisplay)}</span>
-                <span class="muted small vehicle-list__meta">${escapeHtml(s.vehicleType.name)} · vào ${escapeHtml(window.format.dateTime(s.checkInAt))}
-                  ${s.checkInPlateEdited ? ' · <span title="Biển số được nhân viên nhập/sửa tay">sửa tay</span>' : ''}</span>
-              </span>
-              <span class="muted small">${escapeHtml(window.format.duration(s.checkInAt))}</span>
-            </${tag}>
-          </li>`).join('')}
-      </ul>
-      ${total > items.length ? `<p class="muted small">Đang hiện ${items.length}/${total} xe mới nhất.</p>` : ''}`;
+      <div class="inside-table-wrap">
+        <table class="inside-table">
+
+          <thead>
+            <tr>
+              <th>Thời gian vào</th>
+              <th>Biển số</th>
+              <th>Loại xe</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${items.map((s) => `
+              <tr>
+                <td>
+                  ${escapeHtml(
+                    window.format.dateTime(s.checkInAt)
+                  )}
+                </td>
+
+                <td>
+                  <span class="inside-table__plate">
+                    ${escapeHtml(s.plateDisplay)}
+                  </span>
+                </td>
+                <td>${escapeHtml(s.vehicleType.name)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+
+        </table>
+      </div>
+
+      ${total > items.length
+        ? `
+          <p class="muted small">
+            Đang hiện ${items.length}/${total} xe mới nhất.
+          </p>
+        `
+        : ''
+      }
+    `;
   }
+
   if (onSelect) {
     container.addEventListener('click', (e) => {
       const item = e.target.closest('[data-plate]');
-      if (item) onSelect(item.dataset.plate);
+
+      if (item) {
+        onSelect(item.dataset.plate);
+      }
     });
   }
+
   reloadBtn?.addEventListener('click', load);
+
   return { load };
 }
 

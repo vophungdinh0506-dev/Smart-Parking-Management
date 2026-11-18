@@ -48,14 +48,14 @@ const ROLE_LABEL = { ADMIN: 'Quản trị viên', STAFF: 'Nhân viên' };
  * roles: quyền được thấy trang. Đây chỉ là ẩn menu cho gọn; backend mới là nơi chặn quyền thật.
  */
 const NAV_ITEMS = [
-  { href: '/index.html',     label: 'Tổng quan',      ready: true, roles: ['ADMIN', 'STAFF'] },
-  { href: '/check-in.html',  label: 'Xe vào bãi',     ready: true, roles: ['ADMIN', 'STAFF'] },
-  { href: '/check-out.html', label: 'Xe ra bãi',      ready: true, roles: ['ADMIN', 'STAFF'] },
-  { href: '/sessions.html',  label: 'Xe đang gửi',    ready: true, roles: ['ADMIN', 'STAFF'] },
-  { href: '/pricing.html',   label: 'Biểu phí',       ready: true, roles: ['ADMIN', 'STAFF'] },
-  { href: '/history.html',   label: 'Lịch sử gửi xe', ready: true, roles: ['ADMIN', 'STAFF'], extra: true },
-  { href: '/reports.html',   label: 'Doanh thu',      ready: true, roles: ['ADMIN'], extra: true },
-  { href: '/users.html',     label: 'Tài khoản',      ready: true, roles: ['ADMIN'] },
+  { href: '/index.html', label: 'Tổng quan', icon: 'fa-solid fa-house', ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/check-in.html', label: 'Xe vào bãi', icon: 'fa-solid fa-car-side', ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/check-out.html', label: 'Xe ra bãi', icon: 'fa-solid fa-car-rear', ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/sessions.html', label: 'Xe đang gửi', icon: 'fa-solid fa-square-parking', ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/pricing.html', label: 'Biểu phí', icon: 'fa-solid fa-wallet', ready: true, roles: ['ADMIN', 'STAFF'] },
+  { href: '/history.html', label: 'Lịch sử gửi xe', icon: 'fa-solid fa-clock-rotate-left', ready: true, roles: ['ADMIN', 'STAFF'], extra: true },
+  { href: '/reports.html', label: 'Doanh thu', icon: 'fa-solid fa-chart-column', ready: true, roles: ['ADMIN'], extra: true },
+  { href: '/users.html', label: 'Tài khoản', icon: 'fa-solid fa-users-gear', ready: true, roles: ['ADMIN'] }
 ];
 // Trang Đăng nhập (/login.html) không nằm trong menu.
 
@@ -67,20 +67,24 @@ function renderSidebar(user) {
     .filter((item) => item.roles.includes(user.role))
     .map((item) => {
       const active = item.href === current ? ' is-active' : '';
+      const icon = item.icon
+        ? `<i class="${item.icon}" aria-hidden="true"></i> `
+        : '';
       if (!item.ready) {
-        return `<li><span class="sidebar__link is-disabled" aria-disabled="true">${escapeHtml(item.label)}
+        return `<li><span class="sidebar__link is-disabled" aria-disabled="true">${icon}${escapeHtml(item.label)}
                 <span class="sidebar__soon">Sắp có</span></span></li>`;
       }
-      return `<li><a class="sidebar__link${active}" href="${item.href}"${active ? ' aria-current="page"' : ''}>${escapeHtml(item.label)}</a></li>`;
+      return `<li><a class="sidebar__link${active}" href="${item.href}"${active ? ' aria-current="page"' : ''}>${icon}<span>${escapeHtml(item.label)}</span></a></li>`;
     }).join('');
 
   aside.innerHTML = `
-    <div class="sidebar__brand">Smart Parking</div>
+    <div class="sidebar__brand"><div class="sidebar__brand-title"><strong>G7</strong> Smart <span>Parking</span></div>
+    <div class="sidebar__brand-subtitle">HỆ THỐNG QUẢN LÝ BÃI ĐỖ XE</div></div>
     <nav aria-label="Menu chính"><ul class="sidebar__nav">${links}</ul></nav>
     <div class="sidebar__user">
-      <div class="sidebar__user-name">${escapeHtml(user.fullName)}</div>
-      <div class="sidebar__user-role">${escapeHtml(ROLE_LABEL[user.role] ?? user.role)} · ${escapeHtml(user.username)}</div>
-      <button type="button" class="sidebar__logout" id="btn-logout">Đăng xuất</button>
+      <div class="sidebar__profile"><div class="sidebar__avatar"><i class="fa-solid fa-user"></i></div>
+      <div class="sidebar__profile-info"><div class="sidebar__user-name">${escapeHtml(user.fullName)}</div><div class="sidebar__user-role">${escapeHtml(ROLE_LABEL[user.role] ?? user.role)} · ${escapeHtml(user.username)}</div></div></div>
+      <button type="button" class="sidebar__logout" id="btn-logout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>Đăng xuất</span></button>
     </div>`;
 
   document.getElementById('btn-logout').addEventListener('click', logout);

@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Đăng nhập — Smart Parking</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body data-auth="none" class="login-page">
   <main class="login-card">
-    <div class="login-card__brand">Smart Parking</div>
+    <div class="login-card__brand"> <i class="fa-solid fa-car" style="font-size: 25px"></i> Smart Parking</div>
     <h1 class="login-card__title">Đăng nhập</h1>
     <p class="muted login-card__subtitle">Hệ thống quản lý xe ra vào và tính phí gửi xe</p>
 
@@ -16,12 +17,12 @@
 
     <form id="login-form" novalidate>
       <div class="field">
-        <label for="username">Tên đăng nhập</label>
-        <input id="username" name="username" type="text" autocomplete="username" maxlength="50" required autofocus>
+        <label for="username"><i class="fa-solid fa-user"></i> Tên đăng nhập</label>
+        <input id="username" name="username" type="text" placeholder = "Nhập tên đăng nhâp ...." autocomplete="username" maxlength="50" required autofocus>
       </div>
       <div class="field">
-        <label for="password">Mật khẩu</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" maxlength="200" required>
+        <label for="password"><i class="fa-solid fa-unlock"></i> Mật khẩu</label>
+        <input id="password" name="password" type="password" placeholder = "Nhập mật khẩu ...." autocomplete="current-password" maxlength="200" required>
       </div>
       <button class="btn btn--primary btn--block" type="submit" id="btn-login">Đăng nhập</button>
     </form>

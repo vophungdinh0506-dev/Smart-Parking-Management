@@ -1,7 +1,19 @@
 /* =====================================================================
-   Smart Parking — CSS dùng chung cho mọi trang
-   Mọi màu, cỡ chữ, khoảng cách khai báo 1 lần ở :root (design tokens)
-   → các trang dùng lại, giao diện luôn thống nhất.
+   G7 SMART PARKING — STYLE.CSS ĐƯỢC SẮP XẾP THEO CHỨC NĂNG
+
+   Mục lục:
+   01. Design tokens và thiết lập cơ bản
+   02. Layout, thương hiệu, menu, tài khoản Sidebar
+   03. Components dùng chung
+   04. Đăng nhập
+   05. Nghiệp vụ chung Xe vào / Xe ra
+   06. Xe ra bãi
+   07. Biểu phí
+   08. Bảng dữ liệu, thống kê, biểu đồ
+   ===================================================================== */
+
+/* =====================================================================
+   01. DESIGN TOKENS VÀ THIẾT LẬP CƠ BẢN
    ===================================================================== */
 :root {
   --color-bg: #f4f6f9;
@@ -9,7 +21,7 @@
   --color-border: #dde2ea;
   --color-text: #1c2430;
   --color-muted: #5f6b7a;
-  --color-primary: #1f5eff;
+  --color-primary: oklch(55.285% 0.24671 263.756);
   --color-primary-dark: #1647c4;
   --color-success: #16803c;
   --color-success-bg: #e6f6ec;
@@ -40,39 +52,130 @@ body {
   background: var(--color-bg);
 }
 
-/* ---------- Bố cục: sidebar + nội dung ---------- */
+/* =====================================================================
+   02. BỐ CỤC CHUNG VÀ SIDEBAR
+   ===================================================================== */
 .layout { display: flex; min-height: 100vh; }
 
 .sidebar {
   width: var(--sidebar-width);
   flex-shrink: 0;
-  background: var(--color-sidebar);
+  background: linear-gradient(160deg, #101f4c 0%, #142d70 55%, #091736 100%);
   color: var(--color-sidebar-text);
   padding: var(--space-4) var(--space-3);
 }
-.sidebar__brand {
-  font-weight: 700; font-size: 17px; color: #fff;
-  padding: var(--space-2) var(--space-3) var(--space-4);
+/* ---------- Thương hiệu G7 Smart Parking ---------- */
+.sidebar__brand { padding: 18px 8px 12px; margin-bottom: 14px; position: relative;}
+.sidebar__brand-title {font-size: 19px; font-weight: 600; color: #ffffff; white-space: nowrap;}
+.sidebar__brand-title strong {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
+
+    padding: 3px 8px;
+    margin-right: 5px;
+
+    border: 2px solid #1685FF;
+    border-radius: 8px;
+    background: rgba(22, 133, 255, 0.06);
 }
+.sidebar__brand-title span {color: #42b8ff;}
+.sidebar__brand-subtitle {font-size: 9px; letter-spacing: 0.7px; color: #a9bddb; margin-top: 7px; white-space: nowrap;
+}
+
+.sidebar__brand::after {content: "";position: absolute;bottom: 0;left: 8px;right: 8px;height: 2px;border-radius: 2px;
+  background: linear-gradient(90deg, #1685FF, #42b8ff, transparent);
+}
+/* ---------- Điều hướng và hiệu ứng Hover ---------- */
 .sidebar__nav { list-style: none; margin: 0; padding: 0; }
 .sidebar__link {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: var(--space-2);
+  display: flex; align-items: center; justify-content: flex-start; gap: 12px;
   padding: 9px var(--space-3);
   border-radius: 6px;
   color: inherit; text-decoration: none;
+  background-image: linear-gradient(90deg, #1685FF, #2563EB);
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s ease, color 0.5s ease;
 }
-.sidebar__link:hover { background: rgba(255, 255, 255, 0.07); color: #fff; }
-.sidebar__link.is-active { background: var(--color-primary); color: #fff; }
+.sidebar__link:hover { background-size: 100% 100%; color: #ffffff}
+.sidebar__link.is-active { background-size: 100% 100%; color: #fff; font-weight: 600;}
 .sidebar__link.is-disabled { opacity: 0.45; pointer-events: none; }
 .sidebar__soon { font-size: 11px; border: 1px solid currentColor; border-radius: 10px; padding: 0 6px; }
 
+
+/* ---------- Tài khoản người dùng và Đăng xuất (Sidebar) ---------- */
+.sidebar { display: flex; flex-direction: column; }
+.sidebar nav { flex: 1; min-width: 0; max-width: 100%; } /* min-width: 0 để menu cuộn ngang trên điện thoại thay vì làm tràn trang */
+.sidebar__user {
+    margin-top: var(--space-4);
+    padding: 16px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+}
+.sidebar__user-name { color: #fff; font-weight: 600; overflow-wrap: anywhere; }
+.sidebar__profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.sidebar__profile-info {
+    flex: 1;
+    min-width: 0;
+}
+.sidebar__avatar {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1685FF, #2563EB);
+    color: #ffffff;
+    font-size: 18px;
+}
+.sidebar__user-role {
+    font-size: 12px;
+    color: #a9bddb;
+    margin-top: 4px;
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+.sidebar__logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+.sidebar__logout:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+}
+.sidebar__logout:focus-visible { outline: 3px solid #9bb8ff; outline-offset: 2px; }
+
+/* ---------- Nội dung chính và tiêu đề ---------- */
 .main { flex: 1; min-width: 0; padding: var(--space-5) var(--space-6); }
 .page-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-5); flex-wrap: wrap; }
 .page-header h1 { font-size: 22px; margin: 0; }
 .page-header p { margin: var(--space-1) 0 0; color: var(--color-muted); }
 
-/* ---------- Thành phần ---------- */
+/* =====================================================================
+   03. THÀNH PHẦN DÙNG CHUNG (CARD / BUTTON / BADGE / ALERT)
+   ===================================================================== */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -136,7 +239,7 @@ body {
 .toast--error { background: var(--color-danger); }
 .toast--info { background: var(--color-sidebar); }
 
-/* ---------- Màn hình nhỏ (điện thoại, máy tính bảng dọc) ---------- */
+/* ---------- Responsive chung: điện thoại / tablet ---------- */
 @media (max-width: 768px) {
   .layout { flex-direction: column; }
   .sidebar { width: 100%; padding: var(--space-2) var(--space-3); }
@@ -152,28 +255,10 @@ body {
 }
 
 /* =====================================================================
-   Đăng nhập
+   04. XÁC THỰC VÀ FORM ĐĂNG NHẬP
    ===================================================================== */
 /* Trang cần đăng nhập: ẩn nội dung tới khi xác nhận đã đăng nhập (tránh nháy trang) */
 .auth-pending .layout { visibility: hidden; }
-
-.sidebar { display: flex; flex-direction: column; }
-.sidebar nav { flex: 1; min-width: 0; max-width: 100%; } /* min-width: 0 để menu cuộn ngang trên điện thoại thay vì làm tràn trang */
-.sidebar__user {
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  margin-top: var(--space-4);
-  padding: var(--space-4) var(--space-3) var(--space-2);
-}
-.sidebar__user-name { color: #fff; font-weight: 600; overflow-wrap: anywhere; }
-.sidebar__user-role { font-size: 13px; margin-bottom: var(--space-3); overflow-wrap: anywhere; }
-.sidebar__logout {
-  font: inherit; font-size: 14px;
-  background: transparent; color: var(--color-sidebar-text);
-  border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px;
-  padding: 6px 12px; cursor: pointer;
-}
-.sidebar__logout:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
-.sidebar__logout:focus-visible { outline: 3px solid #9bb8ff; outline-offset: 2px; }
 
 .login-page {
   min-height: 100vh;
@@ -185,7 +270,7 @@ body {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.45);
   padding: var(--space-6);
 }
 .login-card__brand { font-weight: 700; color: var(--color-primary); margin-bottom: var(--space-4); }
@@ -211,7 +296,7 @@ body {
 }
 
 /* =====================================================================
-   Trang nghiệp vụ (Xe vào / Xe ra)
+   05. NGHIỆP VỤ CHUNG: XE VÀO / XE RA
    ===================================================================== */
 .grid-2 { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--space-5); align-items: start; }
 .grid-2 > .card { margin-bottom: 0; }
@@ -234,13 +319,80 @@ body {
 }
 
 .dropzone {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  min-height: 200px; padding: var(--space-4);
-  border: 2px dashed var(--color-border); border-radius: var(--radius);
-  background: var(--color-bg); text-align: center; cursor: pointer;
-  overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 220px;
+    padding: 24px;
+
+    border: 2px dashed #80b5ff;
+    border-radius: 12px;
+
+    background: linear-gradient(135deg, #f8fbff, #eaf2ff);
+    text-align: center;
+    cursor: pointer;
+    overflow: hidden;
+
+    transition: background 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+
+    .btn--recognize {
+      width: 100%;
+      gap: 10px;
+      background: linear-gradient(90deg, #1685FF, #2563EB);
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 12px 18px;
+      transition: filter 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .btn--recognize:hover:not(:disabled) {
+      background: linear-gradient(90deg, #1685FF, #2563EB);
+      filter: brightness(1.1);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn--recognize:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    }
+
 }
-.dropzone:hover, .dropzone.is-dragover { border-color: var(--color-primary); background: #eef3ff; }
+.dropzone__hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #1d4ed8;
+}
+
+.dropzone__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 6px;
+    border-radius: 14px;
+    background: #e2eeff;
+    color: #1675ef;
+    font-size: 28px;
+    pointer-events: none;
+}
+
+.dropzone__hint .muted {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.dropzone:hover, .dropzone.is-dragover { 
+  border-color: #1685ff;
+  background: #eef3ff; 
+  box-shadow: 0 0 0 4px rgba(22, 133, 255, 0.08);
+}
 .dropzone:focus-within { outline: 3px solid #cddcff; }
 .dropzone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .dropzone img { max-width: 100%; max-height: 360px; border-radius: 6px; object-fit: contain; }
@@ -274,6 +426,60 @@ fieldset.field legend { font-weight: 600; margin-bottom: var(--space-1); padding
 .segmented__option input:checked + span { border-color: var(--color-primary); background: var(--color-primary); color: #fff; }
 .segmented__option input:focus-visible + span { outline: 3px solid #9bb8ff; outline-offset: 2px; }
 
+
+.inside-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.inside-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+}
+
+.inside-table thead {
+    background: #eff6ff;
+}
+
+.inside-table th {
+    padding: 13px 12px;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    border-bottom: 1px solid #dbeafe;
+}
+
+.inside-table td {
+    padding: 13px 12px;
+    color: #334155;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+}
+
+.inside-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.inside-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.inside-table__plate {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
 .vehicle-list { list-style: none; margin: 0; padding: 0; }
 .vehicle-list__item {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
@@ -286,8 +492,92 @@ fieldset.field legend { font-weight: 600; margin-bottom: var(--space-1); padding
   .grid-2 { grid-template-columns: 1fr; }
 }
 
+/* ---------- Trang Xe vào bãi: bổ sung CSS mới trong nhóm này ---------- */
+/* Các lớp .dropzone, .step-label, .plate-input ở nhóm 05 đang dùng chung. */
+/* Tiêu đề tiếp nhận xe vào */
+.intake-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.intake-heading__icon {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #e8f1ff;
+    color: #1675ef;
+    font-size: 20px;
+}
+
+.intake-heading h2 {
+    margin: 0 0 4px;
+    font-size: 19px;
+    color: #17263d;
+}
+
+.intake-heading p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #64748b;
+}
+
+/* Tiêu đề danh sách xe trong bãi */
+.inside-heading {
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.inside-heading__info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.inside-heading__icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f1ff;
+    color: #1675ef;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+.inside-heading h2 {
+    margin: 0;
+    font-size: 17px;
+    color: #17263d;
+}
+
+.inside-heading p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.inside-heading__reload {
+    color: #2563eb;
+    border-color: #c8dcff;
+    background: #f3f7ff;
+    transition: background 0.25s ease;
+}
+
+.inside-heading__reload:hover {
+    background: #e0edff;
+}
 /* =====================================================================
-   Xe ra bãi: so sánh ảnh, bảng phí, hộp xác nhận
+   06. XE RA BÃI: SO SÁNH ẢNH, BẢNG PHÍ, XÁC NHẬN
    ===================================================================== */
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .btn--large { min-height: 48px; padding: 12px 24px; font-size: 16px; }
@@ -336,7 +626,7 @@ fieldset.field legend { font-weight: 600; margin-bottom: var(--space-1); padding
 }
 
 /* =====================================================================
-   Biểu phí
+   07. BIỂU PHÍ
    ===================================================================== */
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--space-4); }
 .history { margin-top: var(--space-4); border-top: 1px solid var(--color-border); padding-top: var(--space-3); }
@@ -350,7 +640,7 @@ fieldset.field legend { font-weight: 600; margin-bottom: var(--space-1); padding
 }
 
 /* =====================================================================
-   Bảng dữ liệu, bộ lọc, thống kê, biểu đồ
+   08. BẢNG DỮ LIỆU, BỘ LỌC, THỐNG KÊ, BIỂU ĐỒ
    ===================================================================== */
 .badge--info { background: #eef3ff; color: var(--color-primary-dark); }
 .badge--extra { background: #f1ecff; color: #5b3cc4; font-size: 12px; vertical-align: middle; }
@@ -360,6 +650,113 @@ fieldset.field legend { font-weight: 600; margin-bottom: var(--space-1); padding
 .toolbar .field { margin-bottom: 0; min-width: 150px; }
 .toolbar__spacer { flex: 1; }
 .toolbar__presets { flex: 0 0 auto; }
+
+.sessions-search label {
+    color: #17263d;
+    font-weight: 600;
+}
+
+.sessions-search label i {
+    color: #2563eb;
+    margin-right: 6px;
+}
+
+.sessions-search input {
+    min-width: 230px;
+    border-radius: 8px;
+    transition: border-color 0.25s ease,
+                box-shadow 0.25s ease;
+}
+
+.sessions-search input:focus {
+    border-color: #1685ff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(22, 133, 255, 0.12);
+}
+
+.btn--sessions-search {
+    background: linear-gradient(90deg, #1685FF, #2563EB);
+    color: #ffffff;
+    border-radius: 8px;
+    transition: filter 0.25s ease,
+                box-shadow 0.25s ease;
+}
+
+.btn--sessions-search:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.sessions-count {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #edf6ff, #dcecff);
+    border-radius: 12px;
+}
+
+.sessions-count__icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #d4e7ff;
+    border-radius: 10px;
+    color: #2563eb;
+    font-size: 21px;
+}
+
+.sessions-count__label {
+    font-size: 12px;
+    color: #475569;
+}
+
+.sessions-count__value {
+    display: block;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1d4ed8;
+}
+
+.sessions-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 230px;
+    padding: 32px 20px;
+    text-align: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8fbff, #edf4ff);
+}
+
+.sessions-empty__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    background: #e1ecff;
+    color: #4385d8;
+    font-size: 34px;
+}
+
+.sessions-empty h3 {
+    margin: 0 0 6px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #17263d;
+}
+
+.sessions-empty p {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+}
 
 .table-wrap { overflow-x: auto; position: relative; } /* relative: giữ chữ ẩn .sr-only trong khung cuộn, không làm tràn trang */
 .data-table { width: 100%; border-collapse: collapse; font-size: 14px; }

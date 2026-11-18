@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Xe đang gửi — Smart Parking</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
   <div class="layout">
@@ -18,11 +19,25 @@
       </header>
       <section class="card">
         <form id="filter-form" class="toolbar" role="search">
-          <div class="field"><label for="f-plate">Tìm biển số</label>
-            <input id="f-plate" type="search" placeholder="VD: 51F hoặc 12345" maxlength="12" autocomplete="off"></div>
-          <button class="btn btn--secondary" type="submit">Tìm</button>
+          <div class="field sessions-search">
+          <label for="f-plate">
+            Tìm biển số
+          </label>
+          <input id="f-plate" type="search" placeholder="VD: 51F hoặc 12345" maxlength="12" autocomplete="off">
+        </div>
+        <button class="btn btn--sessions-search" type="submit">
+          <i class="fa-solid fa-magnifying-glass"></i> Tìm
+        </button>
           <span class="toolbar__spacer"></span>
-          <span class="muted" id="result-count"></span>
+          <div class="sessions-count">
+            <div class="sessions-count__icon">
+              <i class="fa-solid fa-car-on" aria-hidden="true"></i>
+            </div>
+            <div>
+              <div class="sessions-count__label">Tổng số xe đang gửi</div>
+              <span id="result-count" class="sessions-count__value"></span>
+            </div>
+          </div>
         </form>
         <div id="table-wrap" class="table-wrap"><p class="muted">Đang tải...</p></div>
         <div class="pager" id="pager"></div>
